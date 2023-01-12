@@ -78,11 +78,11 @@ namespace pyrochild.effects.common
             if (ret.Width <= source.Width
                 && ret.Height <= source.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.SuperSampling, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, source);
             }
             else
             {
-                ret.FitSurface(ResamplingAlgorithm.Bicubic, source);
+                ret.FitSurface(ResamplingAlgorithm.Cubic, source);
             }
             return ret;
         }
@@ -120,11 +120,11 @@ namespace pyrochild.effects.common
             if (source.Width <= ret.Width
                 && source.Height <= ret.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.SuperSampling, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, source);
             }
             else
             {
-                ret.FitSurface(ResamplingAlgorithm.Bicubic, source);
+                ret.FitSurface(ResamplingAlgorithm.Cubic, source);
             }
             return ret;
         }
@@ -138,7 +138,7 @@ namespace pyrochild.effects.common
 
         unsafe private static void AlphaOnly(Surface retval)
         {
-            ColorBgra* ptr = retval.GetRowAddressUnchecked(0);
+            ColorBgra* ptr = retval.GetRowPointerUnchecked(0);
             for (int y = 0; y < retval.Height; y++)
             {
                 for (int x = 0; x < retval.Width; x++)

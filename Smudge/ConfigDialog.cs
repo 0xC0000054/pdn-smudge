@@ -210,9 +210,9 @@ namespace pyrochild.effects.smudge
 
             this.BackColor = SystemColors.Control;
             this.Text = Smudge.StaticDialogName;
-            surface = EffectSourceSurface.Clone();
+            surface = EnvironmentParameters.SourceSurface.Clone();
             canvas.Surface = surface;
-            canvas.Selection = Selection;
+            canvas.Selection = EnvironmentParameters.GetSelectionAsPdnRegion();
             historystack = new HistoryStack(surface, false);
 
             InitializeRenderer();
@@ -327,7 +327,7 @@ namespace pyrochild.effects.smudge
 
         public void AddToPenSize(int delta)
         {
-            int newWidth = Int32Util.Clamp(BrushSize + delta, minPenSize, maxPenSize);
+            int newWidth = Math.Clamp(BrushSize + delta, minPenSize, maxPenSize);
             BrushSize = newWidth;
         }
 

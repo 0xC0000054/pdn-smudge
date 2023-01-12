@@ -7,7 +7,10 @@ namespace pyrochild.effects.smudge
     [PluginSupportInfo(typeof(PluginSupportInfo))]
     public sealed class Smudge : Effect
     {
-        public Smudge() : base(StaticName, StaticIcon, StaticSubMenu, EffectFlags.Configurable) { }
+        public Smudge() :
+            base(StaticName, StaticIcon, StaticSubMenu, new EffectOptions() { Flags = EffectFlags.Configurable }) 
+        {
+        }
 
         internal static string RawName { get { return "Smudge"; } }
         public static string StaticName
@@ -43,13 +46,14 @@ namespace pyrochild.effects.smudge
         {
             if (((ConfigToken)parameters).surface != null)
             {
-                dstArgs.Surface.CopySurface(((ConfigToken)parameters).surface, EnvironmentParameters.GetSelection(srcArgs.Bounds));
+                dstArgs.Surface.CopySurface(((ConfigToken)parameters).surface, EnvironmentParameters.GetSelectionAsPdnRegion());
             }
 
             base.OnSetRenderInfo(parameters, dstArgs, srcArgs);
         }
 
         public override void Render(EffectConfigToken parameters, RenderArgs dstArgs, RenderArgs srcArgs, Rectangle[] rois, int startIndex, int length)
-        { }
+        {
+        }
     }
 }

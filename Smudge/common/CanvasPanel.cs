@@ -288,21 +288,21 @@ namespace pyrochild.effects.common
                         sender.BackColor = Color.Transparent;
                     });
 
-                sfc.Clear(ColorBgra.Black);
+                sfc.Fill(ColorBgra.Black);
                 contextMenu.Items.Add("Black", new Bitmap(sfc.CreateAliasedBitmap()), (s, e) =>
                 {
                     sender.BackgroundImage = null;
                     sender.BackColor = Color.Black;
                 });
 
-                sfc.Clear(ColorBgra.White);
+                sfc.Fill(ColorBgra.White);
                 contextMenu.Items.Add("White", new Bitmap(sfc.CreateAliasedBitmap()), (s, e) =>
                 {
                     sender.BackgroundImage = null;
                     sender.BackColor = Color.White;
                 });
 
-                sfc.Clear(ColorBgra.FromBgr(127, 127, 127));
+                sfc.Fill(ColorBgra.FromBgr(127, 127, 127));
                 contextMenu.Items.Add("Gray", new Bitmap(sfc.CreateAliasedBitmap()), (s, e) =>
                 {
                     sender.BackgroundImage = null;
@@ -334,7 +334,7 @@ namespace pyrochild.effects.common
                     {
                         using (Surface fromcb = Surface.CopyFromBitmap((Bitmap)Clipboard.GetImage()))
                         {
-                            sfc.FitSurface(ResamplingAlgorithm.SuperSampling, fromcb);
+                            sfc.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, fromcb);
                             contextMenu.Items[7].Image = new Bitmap(sfc.CreateAliasedBitmap());
                         }
                     }
