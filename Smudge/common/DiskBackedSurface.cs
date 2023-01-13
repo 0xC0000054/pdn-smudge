@@ -76,8 +76,7 @@ namespace pyrochild.effects.common
             FileStream fs = new FileStream(backingfile, FileMode.Open, FileAccess.Read);
             try
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                surface = (Surface)bf.Deserialize(fs);
+                surface = SurfaceSerializer.Deserialize(fs);
                 state = State.Memory;
             }
             catch (ThreadAbortException) { }
@@ -104,8 +103,7 @@ namespace pyrochild.effects.common
             FileStream fs = new FileStream(backingfile, FileMode.Create);
             try
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(fs, surface);
+                SurfaceSerializer.Serialize(fs, surface);
                 state = State.Disk;
             }
             catch (ThreadAbortException) { }
