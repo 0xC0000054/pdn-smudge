@@ -9,11 +9,9 @@
 
 using System;
 using System.IO;
-using System.IO.Compression;
 using PaintDotNet;
 using State = pyrochild.effects.common.DiskBackedSurfaceState;
 using System.Drawing;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 namespace pyrochild.effects.common

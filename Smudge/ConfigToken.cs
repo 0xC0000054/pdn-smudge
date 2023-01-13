@@ -1,7 +1,6 @@
 using PaintDotNet;
 using PaintDotNet.Effects;
 using pyrochild.effects.common;
-using System.Collections.Generic;
 
 namespace pyrochild.effects.smudge
 {
