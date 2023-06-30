@@ -6,15 +6,15 @@ using PaintDotNet;
 
 namespace pyrochild.effects.common
 {
-    public class PngBrushCollection : IEnumerable<PngBrush>, IList<PngBrush>, ICollection<PngBrush>, IDisposable
+    public class SmudgeBrushCollection : IEnumerable<SmudgeBrush>, IList<SmudgeBrush>, ICollection<SmudgeBrush>, IDisposable
     {
-        private List<PngBrush> brushes;
+        private List<SmudgeBrush> brushes;
         private static string brushpath;
 
-        public PngBrushCollection(IServiceProvider serviceprovider, string ownername)
+        public SmudgeBrushCollection(IServiceProvider serviceprovider, string ownername)
         {
             brushpath = Path.Combine(serviceprovider.GetService<PaintDotNet.AppModel.IUserFilesService>().UserFilesPath, ownername + " Brushes");
-            brushes = new List<PngBrush>();
+            brushes = new List<SmudgeBrush>();
 
             if (Directory.Exists(BrushesPath))
             {
@@ -23,10 +23,10 @@ namespace pyrochild.effects.common
                 {
                     string filename = Path.GetFileNameWithoutExtension(s);
 
-                    PngBrush brush = new PngBrush(filename);
+                    SmudgeBrush brush = new SmudgeBrush(filename);
                     if (!brushes.Contains(brush))
                     {
-                        brushes.Add(new PngBrush(filename));
+                        brushes.Add(new SmudgeBrush(filename));
                     }
                 }
             }
@@ -50,7 +50,7 @@ namespace pyrochild.effects.common
 
         #region IEnumerable<PngBrush> Members
 
-        public IEnumerator<PngBrush> GetEnumerator()
+        public IEnumerator<SmudgeBrush> GetEnumerator()
         {
             return brushes.GetEnumerator();
         }
@@ -59,12 +59,12 @@ namespace pyrochild.effects.common
 
         #region IList<PngBrush> Members
 
-        public int IndexOf(PngBrush item)
+        public int IndexOf(SmudgeBrush item)
         {
             return brushes.IndexOf(item);
         }
 
-        public void Insert(int index, PngBrush item)
+        public void Insert(int index, SmudgeBrush item)
         {
             brushes.Insert(index, item);
         }
@@ -74,7 +74,7 @@ namespace pyrochild.effects.common
             brushes.RemoveAt(index);
         }
 
-        public PngBrush this[int index]
+        public SmudgeBrush this[int index]
         {
             get
             {
@@ -90,7 +90,7 @@ namespace pyrochild.effects.common
 
         #region ICollection<PngBrush> Members
 
-        public void Add(PngBrush item)
+        public void Add(SmudgeBrush item)
         {
             brushes.Add(item);
         }
@@ -100,12 +100,12 @@ namespace pyrochild.effects.common
             brushes.Clear();
         }
 
-        public bool Contains(PngBrush item)
+        public bool Contains(SmudgeBrush item)
         {
             return brushes.Contains(item);
         }
 
-        public void CopyTo(PngBrush[] array, int arrayIndex)
+        public void CopyTo(SmudgeBrush[] array, int arrayIndex)
         {
             brushes.CopyTo(array, arrayIndex);
         }
@@ -120,7 +120,7 @@ namespace pyrochild.effects.common
             get { return false; }
         }
 
-        public bool Remove(PngBrush item)
+        public bool Remove(SmudgeBrush item)
         {
             return brushes.Remove(item);
         }
@@ -140,7 +140,7 @@ namespace pyrochild.effects.common
 
         public void Dispose()
         {
-            foreach (PngBrush pb in brushes)
+            foreach (SmudgeBrush pb in brushes)
             {
                 pb.Dispose();
             }

@@ -9,7 +9,7 @@ namespace pyrochild.effects.smudge
         public Surface surface;
 
         //these are just what were last selected in the dialog, so it can "remember" between uses
-        public PngBrush brush;
+        public SmudgeBrush brush;
         public int width;
         public float strength;
         public float jitter;
@@ -17,7 +17,7 @@ namespace pyrochild.effects.smudge
 
         public ConfigToken()
         {
-            brush = new PngBrush("Soft Brush");
+            brush = new SmudgeBrush("Soft Brush");
             width = 30;
             strength = 0.25f;
             jitter = 0f;

@@ -10,7 +10,7 @@ namespace pyrochild.effects.smudge
 {
     public partial class ConfigDialog : EffectConfigDialog
     {
-        PngBrushCollection brushcollection;
+        SmudgeBrushCollection brushcollection;
         private HistoryStack historystack;
         private SmudgeRenderer renderer;
         private const char decPenSizeShortcut = '[';
@@ -24,9 +24,9 @@ namespace pyrochild.effects.smudge
         private const int minPenSize = 2;
         private const int maxPenSize = 1500;
         private int[] brushSizes =
-            { 
-                2, 3, 4, 5, 6, 7, 8, 9, 10, 
-                11, 12, 13, 14, 15, 20, 25, 30, 
+            {
+                2, 3, 4, 5, 6, 7, 8, 9, 10,
+                11, 12, 13, 14, 15, 20, 25, 30,
                 35, 40, 45, 50, 60, 70, 80, 90, 100, 125, 150, 200, 300
             };
 
@@ -108,7 +108,7 @@ namespace pyrochild.effects.smudge
 
             renderer.Invalidated += new InvalidateEventHandler(renderer_Invalidated);
             renderer.MouseDown += new QueuedToolEventHandler(renderer_MouseDown);
-            renderer.MouseUp += new QueuedToolEventHandler(renderer_MouseUp);       
+            renderer.MouseUp += new QueuedToolEventHandler(renderer_MouseUp);
         }
 
         private void canvas_ZoomFactorChanged(object sender, EventArgs e)
@@ -198,7 +198,7 @@ namespace pyrochild.effects.smudge
 
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
-            brushcollection = new PngBrushCollection(Services, Smudge.RawName);
+            brushcollection = new SmudgeBrushCollection(Services, Smudge.RawName);
             CreateDefaultBrushes();
             OnBrushesChanged();
 
@@ -224,9 +224,9 @@ namespace pyrochild.effects.smudge
 
         private void CreateDefaultBrushes()
         {
-            string softbrushpath = Path.Combine(PngBrushCollection.BrushesPath, "Soft Brush.png");
-            string paintbrushpath = Path.Combine(PngBrushCollection.BrushesPath, "Paintbrush.png");
-            string hardbrushpath = Path.Combine(PngBrushCollection.BrushesPath, "Hard Brush.png");
+            string softbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Soft Brush.png");
+            string paintbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Paintbrush.png");
+            string hardbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Hard Brush.png");
 
             if (!File.Exists(softbrushpath))
             {
@@ -276,7 +276,7 @@ namespace pyrochild.effects.smudge
             else
             {
                 brushcollection.Dispose();
-                brushcollection = new PngBrushCollection(Services, Smudge.RawName);
+                brushcollection = new SmudgeBrushCollection(Services, Smudge.RawName);
 
                 if (brushcollection.Count == 0)
                     CreateDefaultBrushes();
@@ -296,7 +296,7 @@ namespace pyrochild.effects.smudge
                 }
                 else
                 {
-                    brushcombobox.SelectedItem = new PngBrush("Soft Brush");
+                    brushcombobox.SelectedItem = new common.SmudgeBrush("Soft Brush");
                 }
             }
         }
@@ -485,7 +485,7 @@ namespace pyrochild.effects.smudge
                 new SmudgeEventArgs(
                     QueuedToolEventType.MouseDown,
                     e,
-                    brushcombobox.SelectedItem as PngBrush,
+                    brushcombobox.SelectedItem as common.SmudgeBrush,
                     BrushSize,
                     Pressure,
                     Jitter,
@@ -499,7 +499,7 @@ namespace pyrochild.effects.smudge
                 new SmudgeEventArgs(
                     QueuedToolEventType.MouseMove,
                     e,
-                    brushcombobox.SelectedItem as PngBrush,
+                    brushcombobox.SelectedItem as common.SmudgeBrush,
                     BrushSize,
                     Pressure,
                     Jitter,
@@ -513,7 +513,7 @@ namespace pyrochild.effects.smudge
                 new SmudgeEventArgs(
                     QueuedToolEventType.MouseUp,
                     e,
-                    brushcombobox.SelectedItem as PngBrush,
+                    brushcombobox.SelectedItem as common.SmudgeBrush,
                     BrushSize,
                     Pressure,
                     Jitter,
@@ -555,7 +555,7 @@ namespace pyrochild.effects.smudge
                 token.surface = surface;
 
                 if (this.brushcombobox.SelectedItem != null)
-                    token.brush = (PngBrush)this.brushcombobox.SelectedItem;
+                    token.brush = (common.SmudgeBrush)this.brushcombobox.SelectedItem;
 
                 base.InitTokenFromDialog();
             }
@@ -690,7 +690,7 @@ namespace pyrochild.effects.smudge
             {
                 using (new WaitCursorChanger(this))
                 {
-                    Services.GetService<PaintDotNet.AppModel.IShellService>().LaunchFolder(this, PngBrushCollection.BrushesPath);
+                    Services.GetService<PaintDotNet.AppModel.IShellService>().LaunchFolder(this, SmudgeBrushCollection.BrushesPath);
                 }
             }
             catch

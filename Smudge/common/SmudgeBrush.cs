@@ -5,19 +5,19 @@ using System.IO;
 
 namespace pyrochild.effects.common
 {
-    public class PngBrush
+    public class SmudgeBrush
     {
-        public static bool operator ==(PngBrush left, PngBrush right)
+        public static bool operator ==(SmudgeBrush left, SmudgeBrush right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(PngBrush left, PngBrush right)
+        public static bool operator !=(SmudgeBrush left, SmudgeBrush right)
         {
             return !(left == right);
         }
 
-        public PngBrush(string brushName)
+        public SmudgeBrush(string brushName)
         {
             name = brushName;
             thumbnailalphaonly = null;
@@ -32,7 +32,7 @@ namespace pyrochild.effects.common
 
         public override bool Equals(object obj)
         {
-            return ((PngBrush)obj).name == this.name;
+            return ((SmudgeBrush)obj).name == this.name;
         }
 
         public override int GetHashCode()
@@ -90,7 +90,7 @@ namespace pyrochild.effects.common
         public Surface GetSurface()
         {
             Surface brushsource = null;
-            string brushesdir = PngBrushCollection.BrushesPath;
+            string brushesdir = SmudgeBrushCollection.BrushesPath;
             if (Directory.Exists(brushesdir))
             {
                 string filename = Path.Combine(brushesdir, name + ".png");

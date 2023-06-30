@@ -6,7 +6,7 @@ namespace pyrochild.effects.smudge
 {
     public class SmudgeEventArgs : QueuedToolEventArgs
     {
-        public SmudgeEventArgs(QueuedToolEventType eventtype, CanvasMouseEventArgs eventargs, PngBrush brush, int brushwidth, float strength, float jitter, float quality)
+        public SmudgeEventArgs(QueuedToolEventType eventtype, CanvasMouseEventArgs eventargs, common.SmudgeBrush brush, int brushwidth, float strength, float jitter, float quality)
             : base(eventtype)
         {
             Button = eventargs.Button;
@@ -22,7 +22,7 @@ namespace pyrochild.effects.smudge
         public Point Location { get { return new Point(X, Y); } }
         public int X { get; set; }
         public int Y { get; set; }
-        public PngBrush Brush { get; set; }
+        public common.SmudgeBrush Brush { get; set; }
         public int BrushWidth { get; set; }
         public float Strength { get; set; }
         public float Jitter { get; set; }
