@@ -9,24 +9,25 @@ namespace pyrochild.effects.common
     public class SmudgeBrushCollection : IEnumerable<SmudgeBrush>, IList<SmudgeBrush>, ICollection<SmudgeBrush>, IDisposable
     {
         private List<SmudgeBrush> brushes;
+        private readonly string cachefolder;
         private static string brushpath;
 
         public SmudgeBrushCollection(IServiceProvider serviceprovider, string ownername)
         {
             brushpath = Path.Combine(serviceprovider.GetService<PaintDotNet.AppModel.IUserFilesService>().UserFilesPath, ownername + " Brushes");
             brushes = new List<SmudgeBrush>();
+            cachefolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(cachefolder);
 
             if (Directory.Exists(BrushesPath))
             {
-                string[] filenames = Directory.GetFiles(BrushesPath, "*.png", SearchOption.TopDirectoryOnly);
-                foreach (string s in filenames)
+                foreach (string path in Directory.EnumerateFiles(BrushesPath, "*.png", SearchOption.TopDirectoryOnly))
                 {
-                    string filename = Path.GetFileNameWithoutExtension(s);
+                    SmudgeBrush brush = PngBrushReader.Load(path, cachefolder);
 
-                    SmudgeBrush brush = new SmudgeBrush(filename);
-                    if (!brushes.Contains(brush))
+                    if (brush != null && !brushes.Contains(brush))
                     {
-                        brushes.Add(new SmudgeBrush(filename));
+                        brushes.Add(brush);
                     }
                 }
             }
@@ -46,6 +47,19 @@ namespace pyrochild.effects.common
             {
                 return brushpath;
             }
+        }
+
+        public int FindIndex(string name)
+        {
+            for (int i = 0; i < brushes.Count; i++)
+            {
+                if (brushes[i].Name.Equals(name, StringComparison.Ordinal))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         #region IEnumerable<PngBrush> Members
@@ -144,6 +158,7 @@ namespace pyrochild.effects.common
             {
                 pb.Dispose();
             }
+            Directory.Delete(cachefolder, true);
             GC.SuppressFinalize(this);
         }
 

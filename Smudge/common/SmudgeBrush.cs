@@ -1,14 +1,25 @@
 ﻿using PaintDotNet;
 using System;
 using System.Drawing;
-using System.IO;
 
 namespace pyrochild.effects.common
 {
-    public class SmudgeBrush
+    public sealed class SmudgeBrush : IEquatable<SmudgeBrush>
     {
+        private DiskBackedSurface original;
+
         public static bool operator ==(SmudgeBrush left, SmudgeBrush right)
         {
+            if (ReferenceEquals(left, right))
+            {
+                return true;
+            }
+
+            if (left is null || right is null)
+            {
+                return false;
+            }
+
             return left.Equals(right);
         }
 
@@ -17,22 +28,28 @@ namespace pyrochild.effects.common
             return !(left == right);
         }
 
-        public SmudgeBrush(string brushName)
+        public SmudgeBrush(string brushName, Surface surface, string cacheFolder)
         {
             name = brushName;
-            thumbnailalphaonly = null;
-            nativesize = Size.Empty;
+            original = new DiskBackedSurface(surface, true, cacheFolder);
+            nativesize = surface.Size;
             thumbnailalphaonly = GetSurfaceAlphaOnly(32);
         }
 
         public void Dispose()
         {
-            thumbnailalphaonly?.Dispose();
+            DisposableUtil.Free(ref original);
+            DisposableUtil.Free(ref thumbnailalphaonly);
         }
 
         public override bool Equals(object obj)
         {
-            return ((SmudgeBrush)obj).name == this.name;
+            return obj is SmudgeBrush other && Equals(other);
+        }
+
+        public bool Equals(SmudgeBrush other)
+        {
+            return other is not null && other.name == this.name;
         }
 
         public override int GetHashCode()
@@ -46,7 +63,15 @@ namespace pyrochild.effects.common
         }
 
         private Surface thumbnailalphaonly;
-        public Surface ThumbnailAlphaOnly { get { return thumbnailalphaonly; } }
+        public Surface ThumbnailAlphaOnly
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                return thumbnailalphaonly;
+            }
+        }
 
         private Size nativesize;
         public Size NativeSize { get { return nativesize; } }
@@ -58,74 +83,60 @@ namespace pyrochild.effects.common
 
         public Surface GetSurface(int maxsidelength)
         {
-            var source = GetSurface();
+            VerifyNotDisposed();
+
             Size size;
 
-            if (source.Width > source.Height)
+            original.ToMemory();
+
+            if (original.Width > original.Height)
             {
                 size = new Size(
                     maxsidelength,
-                    Math.Max((maxsidelength * source.Height) / source.Width, 1));
+                    Math.Max((maxsidelength * original.Height) / original.Width, 1));
             }
             else
             {
                 size = new Size(
-                    Math.Max((maxsidelength * source.Width) / source.Height, 1),
+                    Math.Max((maxsidelength * original.Width) / original.Height, 1),
                     maxsidelength);
             }
 
             var ret = new Surface(size);
-            if (ret.Width <= source.Width
-                && ret.Height <= source.Height)
+            if (ret.Width <= original.Width
+                && ret.Height <= original.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, original.Surface);
             }
             else
             {
-                ret.FitSurface(ResamplingAlgorithm.Cubic, source);
+                ret.FitSurface(ResamplingAlgorithm.Cubic, original.Surface);
             }
-            return ret;
-        }
 
-        public Surface GetSurface()
-        {
-            Surface brushsource = null;
-            string brushesdir = SmudgeBrushCollection.BrushesPath;
-            if (Directory.Exists(brushesdir))
-            {
-                string filename = Path.Combine(brushesdir, name + ".png");
-                if (File.Exists(filename))
-                {
-                    try
-                    {
-                        using (Bitmap b = new Bitmap(filename))
-                            brushsource = Surface.CopyFromBitmap(b);
-                    }
-                    catch { }
-                }
-            }
-            if (brushsource == null)// can't find? default to a soft brush
-            {
-                brushsource = RoundBrush.CreateSurface(500, 1, 0, 0);
-            }
-            nativesize = brushsource.Size;
-            return brushsource;
+            original.ToDisk();
+
+            return ret;
         }
 
         public Surface GetSurface(Size size)
         {
-            var ret = new Surface(size);
-            var source = GetSurface();
+            VerifyNotDisposed();
 
-            if (source.Width <= ret.Width
-                && source.Height <= ret.Height)
+            var ret = new Surface(size);
+            original.ToMemory();
+
+            if (original.Width <= ret.Width
+                && original.Height <= ret.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, original.Surface);
             }
             else
             {
-                ret.FitSurface(ResamplingAlgorithm.Cubic, source);
+                ret.FitSurface(ResamplingAlgorithm.Cubic, original.Surface);
             }
+
+            original.ToDisk();
+
             return ret;
         }
 
@@ -156,11 +167,12 @@ namespace pyrochild.effects.common
             return retval;
         }
 
-        public unsafe Surface GetSurfaceAlphaOnly()
+        private void VerifyNotDisposed()
         {
-            Surface retval = GetSurface();
-            AlphaOnly(retval);
-            return retval;
+            if (original is null)
+            {
+                ExceptionUtil.ThrowObjectDisposedException(nameof(SmudgeBrush));
+            }
         }
     }
 }

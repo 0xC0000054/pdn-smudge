@@ -17,7 +17,7 @@ namespace pyrochild.effects.smudge
 
         public ConfigToken()
         {
-            brush = new SmudgeBrush("Soft Brush");
+            brush = null;
             width = 30;
             strength = 0.25f;
             jitter = 0f;

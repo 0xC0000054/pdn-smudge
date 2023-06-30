@@ -290,13 +290,20 @@ namespace pyrochild.effects.smudge
                 }
                 brushcombobox.Items.Add("Add/Remove Brushes...");
 
-                if (lastsel != null && brushcombobox.Items.Contains(lastsel))
+                // Only select an item if we have at least one brush in the menu.
+                // The Add/Remove Brushes item is ignored.
+                if (brushcombobox.Items.Count > 1)
                 {
-                    brushcombobox.SelectedItem = lastsel;
-                }
-                else
-                {
-                    brushcombobox.SelectedItem = new common.SmudgeBrush("Soft Brush");
+                    if (lastsel != null && brushcombobox.Items.Contains(lastsel))
+                    {
+                        brushcombobox.SelectedItem = lastsel;
+                    }
+                    else
+                    {
+                        int softBrush = brushcollection.FindIndex("Soft Brush");
+
+                        brushcombobox.SelectedIndex = softBrush != -1 ? softBrush : 0;
+                    }
                 }
             }
         }
@@ -533,7 +540,9 @@ namespace pyrochild.effects.smudge
         {
             ConfigToken token = effectTokenCopy as ConfigToken;
 
-            brushcombobox.SelectedItem = token.brush;
+            if (token.brush != null)
+                brushcombobox.SelectedItem = token.brush;
+
             this.Pressure = token.strength;
             this.Jitter = token.jitter;
             this.BrushSize = token.width;
