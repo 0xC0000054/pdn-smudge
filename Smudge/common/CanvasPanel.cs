@@ -106,8 +106,8 @@ namespace pyrochild.effects.common
             g.CompositingMode = oldCM;
         }
 
-        public static readonly float[] ZoomFactors = 
-            { 
+        public static readonly float[] ZoomFactors =
+            {
                 .01f, .02f, .03f, .04f, .05f, .06f, .08f, .12f, .16f, .25f, .33f, .5f, .66f, 1,
                 1.5f, 2, 3, 4, 5, 6, 7, 8, 12, 16
             };
@@ -334,7 +334,7 @@ namespace pyrochild.effects.common
                     {
                         using (Surface fromcb = Surface.CopyFromBitmap((Bitmap)Clipboard.GetImage()))
                         {
-                            sfc.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, fromcb);
+                            sfc.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, fromcb);
                             contextMenu.Items[7].Image = new Bitmap(sfc.CreateAliasedBitmap());
                         }
                     }

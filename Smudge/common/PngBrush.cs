@@ -78,7 +78,7 @@ namespace pyrochild.effects.common
             if (ret.Width <= source.Width
                 && ret.Height <= source.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, source);
             }
             else
             {
@@ -120,7 +120,7 @@ namespace pyrochild.effects.common
             if (source.Width <= ret.Width
                 && source.Height <= ret.Height)
             {
-                ret.FitSurface(ResamplingAlgorithm.AdaptiveBestQuality, source);
+                ret.FitSurface(ResamplingAlgorithm.AdaptiveHighQuality, source);
             }
             else
             {
