@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using PaintDotNet;
+using pyrochild.effects.smudge.Abr;
 
 namespace pyrochild.effects.common
 {
@@ -21,13 +22,31 @@ namespace pyrochild.effects.common
 
             if (Directory.Exists(BrushesPath))
             {
-                foreach (string path in Directory.EnumerateFiles(BrushesPath, "*.png", SearchOption.TopDirectoryOnly))
+                foreach (string path in Directory.EnumerateFiles(BrushesPath, "*", SearchOption.TopDirectoryOnly))
                 {
-                    SmudgeBrush brush = PngBrushReader.Load(path, cachefolder);
-
-                    if (brush != null && !brushes.Contains(brush))
+                    if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                     {
-                        brushes.Add(brush);
+                        SmudgeBrush brush = PngBrushReader.Load(path, cachefolder);
+
+                        if (brush != null && !brushes.Contains(brush))
+                        {
+                            brushes.Add(brush);
+                        }
+                    }
+                    else if (path.EndsWith(".abr", StringComparison.OrdinalIgnoreCase))
+                    {
+                        List<SmudgeBrush> abrBrushes = AbrBrushReader.Load(path, cachefolder);
+
+                        if (abrBrushes != null && abrBrushes.Count > 0)
+                        {
+                            foreach (SmudgeBrush brush in abrBrushes)
+                            {
+                                if (!brushes.Contains(brush))
+                                {
+                                    brushes.Add(brush);
+                                }
+                            }
+                        }
                     }
                 }
             }
