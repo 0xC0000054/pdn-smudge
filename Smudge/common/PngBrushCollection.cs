@@ -142,8 +142,9 @@ namespace pyrochild.effects.common
         {
             foreach (PngBrush pb in brushes)
             {
-                pb.Thumbnail.Dispose();
+                pb.Dispose();
             }
+            GC.SuppressFinalize(this);
         }
 
         #endregion

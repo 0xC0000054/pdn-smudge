@@ -20,11 +20,14 @@ namespace pyrochild.effects.common
         public PngBrush(string brushName)
         {
             name = brushName;
-            thumbnail = null;
             thumbnailalphaonly = null;
             nativesize = Size.Empty;
-            thumbnail = GetSurface(32);
             thumbnailalphaonly = GetSurfaceAlphaOnly(32);
+        }
+
+        public void Dispose()
+        {
+            thumbnailalphaonly?.Dispose();
         }
 
         public override bool Equals(object obj)
@@ -41,9 +44,6 @@ namespace pyrochild.effects.common
         {
             return Name;
         }
-
-        private Surface thumbnail;
-        public Surface Thumbnail { get { return thumbnail; } }
 
         private Surface thumbnailalphaonly;
         public Surface ThumbnailAlphaOnly { get { return thumbnailalphaonly; } }
