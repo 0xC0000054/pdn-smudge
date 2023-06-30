@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace pyrochild.effects.common
@@ -11,11 +12,16 @@ namespace pyrochild.effects.common
         List<HistoryItem> stack;
         int step;
         bool errornotified;
+        readonly string historyDirectory;
 
         public HistoryStack(Surface surface, bool localcopy)
         {
             stack = new List<HistoryItem>();
             step = -1;
+
+            historyDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(historyDirectory);
+
             if (localcopy)
             {
                 AddHistoryItem(surface, surface.Bounds);
@@ -34,7 +40,7 @@ namespace pyrochild.effects.common
                 {
                     stack.RemoveRange(step + 1, stack.Count - 1 - step);
                 }
-                stack.Add(new HistoryItem(surface));
+                stack.Add(new HistoryItem(surface, historyDirectory));
                 step++;
             }
             catch (Exception ex)
@@ -51,7 +57,7 @@ namespace pyrochild.effects.common
                 {
                     stack.RemoveRange(step + 1, stack.Count - 1 - step);
                 }
-                stack.Add(new HistoryItem(surface, bounds));
+                stack.Add(new HistoryItem(surface, bounds, historyDirectory));
                 step++;
             }
             catch (Exception ex)
@@ -118,6 +124,7 @@ namespace pyrochild.effects.common
                 hi.DeltaSurface.Dispose();
             }
             stack.Clear();
+            Directory.Delete(historyDirectory, true);
         }
 
         #endregion

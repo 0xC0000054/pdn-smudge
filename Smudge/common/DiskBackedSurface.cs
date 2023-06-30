@@ -21,32 +21,34 @@ namespace pyrochild.effects.common
           ICloneable
     {
         private string backingfile;
+        private string backingfolder;
         private State state;
         private Surface surface;
         private int width;
         private int height;
 
-        private void Initialize()
+        private void Initialize(string backingfolder)
         {
             width = surface.Width;
             height = surface.Height;
-            backingfile = Path.GetTempFileName();
+            this.backingfolder = backingfolder;
+            backingfile = Path.Combine(backingfolder, Path.GetRandomFileName());
             state = State.Memory;
         }
 
-        public DiskBackedSurface(int width, int height)
+        public DiskBackedSurface(int width, int height, string backingfolder)
         {
             surface = new Surface(width, height);
-            Initialize();
+            Initialize(backingfolder);
         }
 
-        public DiskBackedSurface(Size size)
+        public DiskBackedSurface(Size size, string backingFolder)
         {
             surface = new Surface(size);
-            Initialize();
+            Initialize(backingFolder);
         }
 
-        public DiskBackedSurface(Surface surface, bool takeownership)
+        public DiskBackedSurface(Surface surface, bool takeownership, string backingFolder)
         {
             if (takeownership)
             {
@@ -56,7 +58,7 @@ namespace pyrochild.effects.common
             {
                 this.surface = surface.Clone();
             }
-            Initialize();
+            Initialize(backingFolder);
         }
 
         public string BackingFilePath { get { return backingfile; } }
@@ -137,7 +139,7 @@ namespace pyrochild.effects.common
 
         public object Clone()
         {
-            DiskBackedSurface retval = new DiskBackedSurface(this.surface, true);
+            DiskBackedSurface retval = new DiskBackedSurface(this.surface, true, backingfolder);
             retval.state = this.state;
             retval.backingfile = this.backingfile;
             return retval;

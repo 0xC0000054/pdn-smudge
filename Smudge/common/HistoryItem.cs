@@ -8,7 +8,7 @@ namespace pyrochild.effects.common
         public Rectangle DeltaRect;
         public DiskBackedSurface DeltaSurface;
 
-        public HistoryItem(Surface surface, Rectangle bounds)
+        public HistoryItem(Surface surface, Rectangle bounds, string backingfolder)
         {
             DeltaRect = Rectangle.Intersect(surface.Bounds, bounds);
             Surface temp;
@@ -23,15 +23,15 @@ namespace pyrochild.effects.common
                 DeltaRect.Width = 1;
                 DeltaRect.Height = 1;
             }
-            DeltaSurface = new DiskBackedSurface(temp, true);
+            DeltaSurface = new DiskBackedSurface(temp, true, backingfolder);
             DeltaSurface.ToDisk();
             temp.Dispose();
         }
 
-        public HistoryItem(Surface surface)
+        public HistoryItem(Surface surface, string backingfolder)
         {
             DeltaRect = surface.Bounds;
-            DeltaSurface = new DiskBackedSurface(surface, false);
+            DeltaSurface = new DiskBackedSurface(surface, false, backingfolder);
             DeltaSurface.ToDisk();
         }
     }
