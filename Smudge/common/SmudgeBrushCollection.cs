@@ -11,18 +11,16 @@ namespace pyrochild.effects.common
     {
         private List<SmudgeBrush> brushes;
         private readonly string cachefolder;
-        private static string brushpath;
 
-        public SmudgeBrushCollection(IServiceProvider serviceprovider, string ownername)
+        public SmudgeBrushCollection(string brushpath)
         {
-            brushpath = Path.Combine(serviceprovider.GetService<PaintDotNet.AppModel.IUserFilesService>().UserFilesPath, ownername + " Brushes");
             brushes = new List<SmudgeBrush>();
             cachefolder = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(cachefolder);
 
-            if (Directory.Exists(BrushesPath))
+            try
             {
-                foreach (string path in Directory.EnumerateFiles(BrushesPath, "*", SearchOption.TopDirectoryOnly))
+                foreach (string path in Directory.EnumerateFiles(brushpath, "*", SearchOption.TopDirectoryOnly))
                 {
                     if (path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
                     {
@@ -50,21 +48,8 @@ namespace pyrochild.effects.common
                     }
                 }
             }
-            else
+            catch (DirectoryNotFoundException)
             {
-                try
-                {
-                    Directory.CreateDirectory(BrushesPath);
-                }
-                catch { }
-            }
-        }
-
-        public static string BrushesPath
-        {
-            get
-            {
-                return brushpath;
             }
         }
 

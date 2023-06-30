@@ -13,6 +13,7 @@ namespace pyrochild.effects.smudge
         SmudgeBrushCollection brushcollection;
         private HistoryStack historystack;
         private SmudgeRenderer renderer;
+        private string brushesPath;
         private const char decPenSizeShortcut = '[';
         private const char decPenSizeBy5Shortcut = (char)27; // Ctrl [ but must also test that Ctrl is down
         private const char incPenSizeShortcut = ']';
@@ -198,15 +199,12 @@ namespace pyrochild.effects.smudge
 
         private void ConfigDialog_Load(object sender, EventArgs e)
         {
-            brushcollection = new SmudgeBrushCollection(Services, Smudge.RawName);
-            CreateDefaultBrushes();
-            OnBrushesChanged();
+            brushesPath = Path.Combine(Services.GetService<PaintDotNet.AppModel.IUserFilesService>().UserFilesPath, Smudge.RawName + " Brushes");
 
-            for (int i = 0; i < brushcollection.Count; i++)
-            {
-                brushcombobox.Items.Add(brushcollection[i]);
-            }
-            brushcombobox.Items.Add("Add/Remove Brushes...");
+            CreateDefaultBrushes();
+            // OnBrushesChanges will load all of the brushes in the custom brushes folder
+            // and set the combo box to a default item.
+            OnBrushesChanged();
 
             this.BackColor = SystemColors.Control;
             this.Text = Smudge.StaticDialogName;
@@ -224,9 +222,9 @@ namespace pyrochild.effects.smudge
 
         private void CreateDefaultBrushes()
         {
-            string softbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Soft Brush.png");
-            string paintbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Paintbrush.png");
-            string hardbrushpath = Path.Combine(SmudgeBrushCollection.BrushesPath, "Hard Brush.png");
+            string softbrushpath = Path.Combine(brushesPath, "Soft Brush.png");
+            string paintbrushpath = Path.Combine(brushesPath, "Paintbrush.png");
+            string hardbrushpath = Path.Combine(brushesPath, "Hard Brush.png");
 
             if (!File.Exists(softbrushpath))
             {
@@ -275,11 +273,8 @@ namespace pyrochild.effects.smudge
             }
             else
             {
-                brushcollection.Dispose();
-                brushcollection = new SmudgeBrushCollection(Services, Smudge.RawName);
-
-                if (brushcollection.Count == 0)
-                    CreateDefaultBrushes();
+                brushcollection?.Dispose();
+                brushcollection = new SmudgeBrushCollection(brushesPath);
 
                 object lastsel = brushcombobox.SelectedItem;
 
@@ -601,11 +596,13 @@ namespace pyrochild.effects.smudge
         }
 
         int lastselected = 0;
+        bool brushesChanged;
         void brushcombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (brushcombobox.SelectedIndex == brushcombobox.Items.Count - 1)
             {
                 DoAddBrushes();
+                brushesChanged = true;
                 brushcombobox.SelectedIndex = lastselected;
             }
             else
@@ -626,7 +623,11 @@ namespace pyrochild.effects.smudge
         void brushcombobox_DropDown(object sender, EventArgs e)
         {
             brushcombobox.BeginUpdate();
-            OnBrushesChanged();
+            if (brushesChanged)
+            {
+                brushesChanged = false;
+                OnBrushesChanged();
+            }
             droppingdown = true;
             brushcombobox.ComboBox.ItemHeight++;
             brushcombobox.EndUpdate();
@@ -699,7 +700,7 @@ namespace pyrochild.effects.smudge
             {
                 using (new WaitCursorChanger(this))
                 {
-                    Services.GetService<PaintDotNet.AppModel.IShellService>().LaunchFolder(this, SmudgeBrushCollection.BrushesPath);
+                    Services.GetService<PaintDotNet.AppModel.IShellService>().LaunchFolder(this, brushesPath);
                 }
             }
             catch
