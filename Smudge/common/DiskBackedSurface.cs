@@ -61,6 +61,16 @@ namespace pyrochild.effects.common
             Initialize(backingFolder);
         }
 
+        private DiskBackedSurface(DiskBackedSurface cloneMe)
+        {
+            surface = cloneMe.surface;
+            width = cloneMe.width;
+            height = cloneMe.height;
+            backingfolder = cloneMe.backingfolder;
+            backingfile= cloneMe.backingfile;
+            state = cloneMe.state;
+        }
+
         public string BackingFilePath { get { return backingfile; } }
         public Surface Surface { get { return surface; } }
         public int Width { get { return width; } }
@@ -139,10 +149,7 @@ namespace pyrochild.effects.common
 
         public object Clone()
         {
-            DiskBackedSurface retval = new DiskBackedSurface(this.surface, true, backingfolder);
-            retval.state = this.state;
-            retval.backingfile = this.backingfile;
-            return retval;
+            return new DiskBackedSurface(this);
         }
 
         #endregion
