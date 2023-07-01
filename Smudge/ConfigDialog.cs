@@ -278,12 +278,16 @@ namespace pyrochild.effects.smudge
 
                 object lastsel = brushcombobox.SelectedItem;
 
+                brushcombobox.BeginUpdate();
+
                 brushcombobox.Items.Clear();
                 for (int i = 0; i < brushcollection.Count; i++)
                 {
                     brushcombobox.Items.Add(brushcollection[i]);
                 }
                 brushcombobox.Items.Add("Add/Remove Brushes...");
+
+                brushcombobox.EndUpdate();
 
                 // Only select an item if we have at least one brush in the menu.
                 // The Add/Remove Brushes item is ignored.
