@@ -201,6 +201,8 @@ namespace pyrochild.effects.smudge
         {
             brushesPath = Path.Combine(Services.GetService<PaintDotNet.AppModel.IUserFilesService>().UserFilesPath, Smudge.RawName + " Brushes");
 
+            Directory.CreateDirectory(brushesPath);
+
             CreateDefaultBrushes();
             // OnBrushesChanges will load all of the brushes in the custom brushes folder
             // and set the combo box to a default item.
