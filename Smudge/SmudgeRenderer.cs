@@ -69,7 +69,7 @@ namespace pyrochild.effects.smudge
                     Point dstpt = Point.Subtract(new Point((int)currentpoint.X, (int)currentpoint.Y), brushcenteroffset);
                     Rectangle dstRect = new Rectangle(dstpt, brushsize);
                     Rectangle clippedRect = Rectangle.Intersect(dstRect, Surface.Bounds);
-                    
+
                         fixed (float* brshpin = brush,
                                       _strmask = strengthmask)
                     {
@@ -151,7 +151,11 @@ namespace pyrochild.effects.smudge
 
         protected unsafe override void OnMouseDown(QueuedToolEventArgs le)
         {
-            SmudgeEventArgs e = le as SmudgeEventArgs;
+            if (le is not SmudgeEventArgs e || e.Brush is null)
+            {
+                return;
+            }
+
             lastmouse = e.Location;
             if (e.Button == MouseButtons.Left)
             {
@@ -171,7 +175,7 @@ namespace pyrochild.effects.smudge
                     strengthmask = new float[brusharea];
 
                     float strength = (float)(Math.Pow(e.Strength, .25) / 255.0);
-                    
+
                     fixed (float* _strmask = strengthmask)
                     {
                         float* strmask = _strmask;
